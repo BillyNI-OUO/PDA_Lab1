@@ -9,10 +9,22 @@ int main(int argc, char **argv){
 	if (argc == 2){
 		filename = argv[1];
 	}
-	cout << "Hello World" << endl;
+	std::vector<vector<int>> answers;
 	Box box;
 	Parser parser(filename);
 	parser.Set(&box);
 	cout << box.height << " " << box.width << endl;
 	parser.PrintContent();
+	Block *ans;
+	box.splitBlock(50, box.headBlock);
+	vector<Block*> res = box.searchBotNeighbors(box.headBlock);
+	ans = box.createBlock(35,35, 60, 20);
+	res = box.searchNeighbors(ans);
+	box.headBlock->PrintContent();
+	for(Block *i: res){
+		i->PrintContent();
+	}
+	
+	//cout << box.searchIsSolidBlock(0,0,100,100) << endl;
+
 }

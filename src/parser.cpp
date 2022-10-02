@@ -2,11 +2,11 @@
 #include <fstream>
 #include <sstream>
 #include "parser.h"
-// #include "box.h"
-// #include "block.h"
 using namespace std;
+
 typedef pair<int,int> Coordinate;
 typedef pair<char, std::vector<int>> Instruction;
+
 Parser::Parser(char *filename){
 	ifstream inputFile(filename);
 	if (inputFile.is_open()){
@@ -31,7 +31,7 @@ void Parser::Set(Box *box){
   		std::istringstream(tok) >> width;
   		std::istringstream(tok) >> height;
   		box->setWidthAndHeight(width, height);
-  		box->headBlock = new Block(Coordinate(0, 0), NULL, NULL, NULL, NULL, width, height);
+  		box->headBlock = new Block(Coordinate(0, 0), NULL, NULL, NULL, NULL, width, height, false);
 
 	    while ( getline (inputFile,line) ){
 	    	ss.str("");
