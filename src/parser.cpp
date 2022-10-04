@@ -31,7 +31,7 @@ void Parser::Set(Box *box){
   		std::istringstream(tok) >> width;
   		std::istringstream(tok) >> height;
   		box->setWidthAndHeight(width, height);
-  		box->headBlock = new Block(Coordinate(0, 0), NULL, NULL, NULL, NULL, width, height, false);
+  		box->headBlock = new Block(Coordinate(0, 0), NULL, NULL, NULL, NULL, width, height, false, -1);
 
 	    while ( getline (inputFile,line) ){
 	    	ss.str("");
@@ -52,6 +52,7 @@ void Parser::Set(Box *box){
   				operation.push_back(Instruction('P', *operands));
 	    	}else{
 	    		vector<int> *operands = new vector<int>;
+				operands->push_back(stoi(operators));
 	    		for(int i = 0; i < 4; i ++){
 	    			int temp;
 	    			getline(ss, tok, ' ');
