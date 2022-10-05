@@ -10,20 +10,22 @@ void Box::setWidthAndHeight(int width, int height){
 bool Box::searchIsSolidBlock(int xCoordinate, int yCoordinate, int width, int height){
 	if(yCoordinate <= 0)return false;
 	Block *currentBlock = this->searchPointInBlock(xCoordinate, yCoordinate+height-1);
-	while(currentBlock != NULL){
-		if(currentBlock->lowerLeftCornerCoordinate.second+currentBlock->height>=yCoordinate){
+	while(currentBlock != nullptr){
+		if(currentBlock->lowerLeftCornerCoordinate.second + currentBlock->height > yCoordinate){
 			return false;
 		}
 		if(currentBlock->isSolid){
 			return true;
-		}else if(currentBlock->topRight != NULL){
+		}else if(currentBlock->topRight != nullptr){
 				if(currentBlock->topRight->lowerLeftCornerCoordinate.first < xCoordinate+width){
 					return true;
-				}else if(currentBlock->leftBot != NULL){
+				}else if(currentBlock->leftBot != nullptr){
 						currentBlock = currentBlock->leftBot;
 				}else{
 					return false;
 				}
+		}else{
+			return false;
 		}
 	}
 	return false;
@@ -34,9 +36,8 @@ std::vector<Block*> Box::searchBlocks(int xCoordinate, int yCoordinate, int widt
 	std::vector<Block*> res;
 	int curYCoordinate = yCoordinate+height-1;
 	while(curYCoordinate > yCoordinate){
-		
 		Block *currentBlock = this->searchPointInBlock(xCoordinate, curYCoordinate);
-		if (currentBlock == NULL)return res;
+		if (currentBlock == nullptr)return res;
 		this->recursiveEnumerate(currentBlock, &res,  xCoordinate, yCoordinate, width, height);
 		curYCoordinate -= currentBlock->height;
 	}
@@ -44,9 +45,9 @@ std::vector<Block*> Box::searchBlocks(int xCoordinate, int yCoordinate, int widt
 }
 
 void Box::recursiveEnumerate(Block *curBlock, std::vector<Block*>*res, int xCoordinate, int yCoordinate, int width, int height){
-	if(curBlock == NULL)return;
+	if(curBlock == nullptr)return;
 	res->push_back(curBlock);
-	if(curBlock->lowerLeftCornerCoordinate.first > xCoordinate+width)return;
+	if(curBlock->lowerLeftCornerCoordinate.first+curBlock->width > xCoordinate+width)return;
 	std::vector<Block*>neighbors = this->searchRightNeighbors(curBlock);
 	std::vector<Block*>insetNeighbor;
 	for(auto i: neighbors){
@@ -69,10 +70,10 @@ void Box::recursiveEnumerate(Block *curBlock, std::vector<Block*>*res, int xCoor
 
 Block* Box::searchPointInBlock(int xCoordinate, int yCoordinate){
 	if(xCoordinate < 0 || yCoordinate < 0 || xCoordinate > width || yCoordinate > height){
-		return NULL;
+		return nullptr;
 	}
 	Block *currentBlock = this->headBlock;
-	while(currentBlock != NULL){
+	while(currentBlock != nullptr){
 		if(yCoordinate >= currentBlock->lowerLeftCornerCoordinate.second+currentBlock->height){
 			currentBlock = currentBlock->rightTop;
 		}else if (yCoordinate < currentBlock->lowerLeftCornerCoordinate.second){
@@ -104,12 +105,12 @@ std::vector<Block*> Box::searchNeighbors(Block *targetBlock){
 }
 std::vector<Block*> Box::searchRightNeighbors(Block *targetBlock){
 	std::vector<Block*> res;
-	if(targetBlock == NULL)return res;
+	if(targetBlock == nullptr)return res;
 	Block *currentBlock = targetBlock->topRight;
-	while(currentBlock!=NULL){
+	while(currentBlock!=nullptr){
 		res.push_back(currentBlock);
 		currentBlock = currentBlock->leftBot;
-		if(currentBlock==NULL)break;
+		if(currentBlock==nullptr)break;
 		if(currentBlock->lowerLeftCornerCoordinate.second+currentBlock->height <= targetBlock->lowerLeftCornerCoordinate.second){
 			break;
 		}
@@ -119,13 +120,13 @@ std::vector<Block*> Box::searchRightNeighbors(Block *targetBlock){
 
 std::vector<Block*> Box::searchLeftNeighbors(Block *targetBlock){
 	std::vector<Block*> res;
-	if(targetBlock == NULL)return res;
+	if(targetBlock == nullptr)return res;
 	Block *currentBlock = targetBlock->botLeft;
-	while(currentBlock!=NULL){
+	while(currentBlock!=nullptr){
 
 		res.push_back(currentBlock);
 		currentBlock = currentBlock->rightTop;
-		if(currentBlock==NULL)break;
+		if(currentBlock==nullptr)break;
 		if(currentBlock->lowerLeftCornerCoordinate.second 
 			>= targetBlock->lowerLeftCornerCoordinate.second+targetBlock->height){
 			break;
@@ -137,13 +138,13 @@ std::vector<Block*> Box::searchLeftNeighbors(Block *targetBlock){
 
 std::vector<Block*> Box::searchTopNeighbors(Block *targetBlock){
 	std::vector<Block*> res;
-	if(targetBlock == NULL)return res;
+	if(targetBlock == nullptr)return res;
 	Block *currentBlock = targetBlock->rightTop;
 	
-	while(currentBlock != NULL){
+	while(currentBlock != nullptr){
 		res.push_back(currentBlock);
 		currentBlock = currentBlock->botLeft;
-		if(currentBlock==NULL)break;
+		if(currentBlock==nullptr)break;
 		if(currentBlock->lowerLeftCornerCoordinate.first+currentBlock->width <= targetBlock->lowerLeftCornerCoordinate.first){
 			break;
 		}
@@ -153,13 +154,13 @@ std::vector<Block*> Box::searchTopNeighbors(Block *targetBlock){
 
 std::vector<Block*> Box::searchBotNeighbors(Block *targetBlock){
 	std::vector<Block*> res;
-	if(targetBlock == NULL)return res;
+	if(targetBlock == nullptr)return res;
 	Block *currentBlock = targetBlock->leftBot;
 	
-	while(currentBlock != NULL){
+	while(currentBlock != nullptr){
 		res.push_back(currentBlock);
 		currentBlock = currentBlock->topRight;
-		if(currentBlock==NULL)break;
+		if(currentBlock==nullptr)break;
 		if(currentBlock->lowerLeftCornerCoordinate.first
 			>= targetBlock->lowerLeftCornerCoordinate.first+targetBlock->width){
 			break;
@@ -181,98 +182,80 @@ Block *Box::findDownBlock(Block *targetBlock, int xCoordinate){
 			return i;
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 Block* Box::createBlock(int xCoordinate, int yCoordinate, int width, int height, int index){
 	if(this->searchIsSolidBlock(xCoordinate, yCoordinate, width, height)){
-		return NULL;
+		return nullptr;
 	}
 	Block *topBlock = this->searchPointInBlock(xCoordinate, yCoordinate+height);
 	Block *startBlock = this->splitBlock(yCoordinate+height, topBlock);
 	Block *botBlock = this->searchPointInBlock(xCoordinate, yCoordinate);
 	Block *endBlock = this->splitBlock(yCoordinate, botBlock);
 
-	Block *newBlock = new Block(std::pair<int,int>(xCoordinate, yCoordinate), NULL, NULL,
-	 NULL, NULL, height, width, true, index);
-	Block *leftLastBlock = NULL;
-	Block *rightLastBlock = NULL;
-	Block *currentBlock = startBlock;
-
-
-	if (currentBlock == NULL){
-		currentBlock = this->searchPointInBlock(xCoordinate, yCoordinate+height-1);
-		//currentBlock->PrintContent();
-		// std::vector<Block*> topBlockBotNeighbors = this->searchBotNeighbors(topBlock);
-		// for(Block * i: topBlockBotNeighbors){
-		// 	if(i->lowerLeftCornerCoordinate.first <= xCoordinate && 
-		// 		i->lowerLeftCornerCoordinate.first+i->width > xCoordinate){
-		// 		currentBlock = i;
-		// 		break;
-		// 	}
-		// }
+	
+	Block *currentBlock = this->searchPointInBlock(xCoordinate, yCoordinate+height-1);
+	Block *newBlock = new Block(std::pair<int,int>(0, 0), nullptr, nullptr,
+	 nullptr, nullptr, 0, 0, true, index);
+	if(currentBlock == nullptr){
+		return nullptr;
 	}
-	if(currentBlock == NULL){
-		return NULL;
+	
+	newBlock->topRight = this->searchPointInBlock(xCoordinate+width, yCoordinate+height-1);
+	if(newBlock->topRight == currentBlock){
+		newBlock->topRight = nullptr;
 	}
-	std::vector<Block*> currentBlockTopNeighbors = this->searchTopNeighbors(currentBlock);
-	for(Block* i: currentBlockTopNeighbors){
-		if(i->lowerLeftCornerCoordinate.first < xCoordinate+width && newBlock->rightTop == NULL){
-			newBlock->rightTop = i;
-			break;
-		}
-	}
+	newBlock->rightTop = this->searchPointInBlock(xCoordinate+width-1, yCoordinate+height);
+	
 
-
-
-	while(currentBlock != NULL){
+	while(currentBlock != nullptr){
 		if(currentBlock == endBlock){
 			break;
 		}
+		bool createLeft = false;
+		bool createRight = false;
 		std::vector<Block*> topNeighbors = this->searchTopNeighbors(currentBlock);
 		std::vector<Block*> botNeighbors = this->searchBotNeighbors(currentBlock);
 		std::vector<Block*> leftNeighbors = this->searchLeftNeighbors(currentBlock);
 		std::vector<Block*> rightNeighbors = this->searchRightNeighbors(currentBlock);
+		Block *nextBlock = this->searchPointInBlock(xCoordinate, currentBlock->lowerLeftCornerCoordinate.second-1);
+		Block *leftLastBlock = this->searchPointInBlock(xCoordinate-1,currentBlock->lowerLeftCornerCoordinate.second+currentBlock->height);
+		Block *rightLastBlock = this->searchPointInBlock(xCoordinate+width, currentBlock->lowerLeftCornerCoordinate.second+currentBlock->height);
+		Block *rightNewBlockLeftBot = this->searchPointInBlock(xCoordinate+width, currentBlock->lowerLeftCornerCoordinate.second-1);
 		if(xCoordinate > currentBlock->lowerLeftCornerCoordinate.first){
+			createLeft = true;
 			Block *newLeftBlock = new Block(currentBlock->lowerLeftCornerCoordinate, currentBlock->leftBot, 
 			currentBlock->botLeft, leftLastBlock, newBlock, currentBlock->height,
 			xCoordinate-currentBlock->lowerLeftCornerCoordinate.first, false, -1);
-			if(newLeftBlock->rightTop == NULL){
-				for(auto i: topNeighbors){
-					if(newLeftBlock->lowerLeftCornerCoordinate.first+ newLeftBlock->width >
-						i->lowerLeftCornerCoordinate.first){
-						newLeftBlock->rightTop = i;
-						break;
-
-					}
-				}
-			}
-			if (leftLastBlock == NULL){
+			if (leftLastBlock == nullptr){
 				leftLastBlock = newLeftBlock;
-			}else if(newLeftBlock->width == leftLastBlock->width && !leftLastBlock->isSolid){
+			}else if(newLeftBlock->width == leftLastBlock->width && !leftLastBlock->isSolid &&
+				 newLeftBlock->lowerLeftCornerCoordinate.first == leftLastBlock->lowerLeftCornerCoordinate.first){
 				leftLastBlock->height += newLeftBlock->height;
 				leftLastBlock->leftBot = newLeftBlock->leftBot;
 				leftLastBlock->botLeft = newLeftBlock->botLeft;
 				leftLastBlock->lowerLeftCornerCoordinate = newLeftBlock->lowerLeftCornerCoordinate;
 				delete newLeftBlock;
 			}else{
-				if(leftLastBlock->width<newLeftBlock->width){
+				if(leftLastBlock->lowerLeftCornerCoordinate.first >= newLeftBlock->lowerLeftCornerCoordinate.first){
 					leftLastBlock->leftBot = newLeftBlock;
 				}
 				leftLastBlock = newLeftBlock;
-
 			}
+			
 			//add leftNeighbors point to leftlast
-			
 			for(Block *i : leftNeighbors){
+				
 				i->topRight = leftLastBlock;
+				
 			}
-			
 			//add topNeighbors to leftlast
-			for(Block *i : topNeighbors){
+			for(Block *i : topNeighbors){	
 				if(i->lowerLeftCornerCoordinate.first < xCoordinate 
-					&& i->lowerLeftCornerCoordinate.first >= leftLastBlock->lowerLeftCornerCoordinate.first){
-					i->leftBot = leftLastBlock;	
+					&& i->lowerLeftCornerCoordinate.first >= leftLastBlock->lowerLeftCornerCoordinate.first && i != leftLastBlock){
+					i->leftBot = leftLastBlock;
+					//					
 				}
 			}
 
@@ -283,35 +266,41 @@ Block* Box::createBlock(int xCoordinate, int yCoordinate, int width, int height,
 					i->rightTop = leftLastBlock;	
 				}
 			}
-		}else{
-			leftLastBlock = currentBlock->botLeft;
 		}
+		
+		//newBlock->botLeft = leftLastBlock;
+		//leftLastBlock->PrintContent();
 		// currentBlock->PrintContent();
 		// leftLastBlock->PrintContent();
 		
 		if(xCoordinate+width < currentBlock->lowerLeftCornerCoordinate.first+currentBlock->width){
+			createRight = true;
 			Block *newRightBlock = new Block(std::pair<int, int>(xCoordinate+width, 
-				currentBlock->lowerLeftCornerCoordinate.second), NULL, newBlock, rightLastBlock, 
+				currentBlock->lowerLeftCornerCoordinate.second), nullptr, newBlock, currentBlock->rightTop, 
 				currentBlock->topRight, currentBlock->height,
 				currentBlock->lowerLeftCornerCoordinate.first+currentBlock->width-(xCoordinate+width), false, -1);
-				newRightBlock->leftBot = this->findDownBlock(currentBlock, newRightBlock->lowerLeftCornerCoordinate.first);
-			if(rightLastBlock == NULL){
+				newRightBlock->leftBot=rightNewBlockLeftBot;
+			if(rightLastBlock == nullptr){
 				rightLastBlock = newRightBlock;
-			}else if(newRightBlock->width == rightLastBlock->width && !rightLastBlock->isSolid){
+			}else if(newRightBlock->width == rightLastBlock->width && !rightLastBlock->isSolid && 
+				newRightBlock->lowerLeftCornerCoordinate.first == rightLastBlock->lowerLeftCornerCoordinate.first){
 				rightLastBlock->height += newRightBlock->height;
 				rightLastBlock->leftBot = newRightBlock->leftBot;
+				rightLastBlock->botLeft = newRightBlock->botLeft;
 				rightLastBlock->lowerLeftCornerCoordinate = newRightBlock->lowerLeftCornerCoordinate;
 				delete newRightBlock;
 			}else{
-				rightLastBlock->leftBot = newRightBlock;
+				if(rightLastBlock->lowerLeftCornerCoordinate.first== newRightBlock->lowerLeftCornerCoordinate.first){
+				 	rightLastBlock->leftBot = newRightBlock;
+				}
 				rightLastBlock = newRightBlock;
 			}
 
-			if(newBlock->topRight == NULL){
+			if(newBlock->topRight == nullptr){
 				newBlock->topRight = rightLastBlock;
 			}
+
 			//add rightNeighbors to rightLast
-			
 			for(Block *i : rightNeighbors){
 				i->botLeft = rightLastBlock;
 			}
@@ -319,7 +308,7 @@ Block* Box::createBlock(int xCoordinate, int yCoordinate, int width, int height,
 			//add topNeighbors to rightlast
 			for(Block *i : topNeighbors){
 				if(i->lowerLeftCornerCoordinate.first < rightLastBlock->lowerLeftCornerCoordinate.first+rightLastBlock->width
-					&& i->lowerLeftCornerCoordinate.first >= rightLastBlock->lowerLeftCornerCoordinate.first){
+					&& i->lowerLeftCornerCoordinate.first >= rightLastBlock->lowerLeftCornerCoordinate.first && i != rightLastBlock){
 					i->leftBot = rightLastBlock;	
 				}
 			}
@@ -332,42 +321,63 @@ Block* Box::createBlock(int xCoordinate, int yCoordinate, int width, int height,
 				}
 			}
 
-		}else{
-
-			if(!rightNeighbors.empty()){
-				if(rightLastBlock != NULL){
-					rightLastBlock->leftBot = rightNeighbors.front();
-				}
-				rightLastBlock = rightNeighbors.back();
+		}
+		
+		
+		for(Block *i:topNeighbors){
+			if(i->lowerLeftCornerCoordinate.first>=xCoordinate && i->lowerLeftCornerCoordinate.first < xCoordinate+width && i!=newBlock){
+				i->leftBot = newBlock;
 			}
 		}
-
+		for(Block *i:botNeighbors){
+			if(i->lowerLeftCornerCoordinate.first+i->width >xCoordinate && 
+				i->lowerLeftCornerCoordinate.first+i->width<=xCoordinate+width){
+					i->rightTop=newBlock;
+				}
+		}
+		for(Block *i:leftNeighbors){
+			if(i->lowerLeftCornerCoordinate.first+i->width == xCoordinate && i->topRight == currentBlock){
+				i->topRight = newBlock;
+			}
+		}
+		for(Block*i:rightNeighbors){
+			if(i->lowerLeftCornerCoordinate.first == xCoordinate+width && i->botLeft == currentBlock){
+				i->botLeft = newBlock;
+			}
+		}
 		
+		newBlock->lowerLeftCornerCoordinate.first = xCoordinate;
+		newBlock->lowerLeftCornerCoordinate.second = currentBlock->lowerLeftCornerCoordinate.second;
+		newBlock->width = width;
+		newBlock->height += currentBlock->height;
+		if(createLeft){
+			newBlock->botLeft = leftLastBlock;
+		}else{
+			newBlock->botLeft = currentBlock->botLeft;
+		}
+		newBlock->leftBot = nextBlock;
 		Block *tempBlock = currentBlock;
-		currentBlock = this->findDownBlock(currentBlock, xCoordinate);
+		
+		currentBlock = nextBlock;
 		if(tempBlock == this->headBlock){
 			this->headBlock = newBlock;
 		}
 		if(tempBlock->lowerLeftCornerCoordinate.second == yCoordinate){
 			newBlock->leftBot = currentBlock;
 			newBlock->botLeft = leftLastBlock;
-			if(rightLastBlock->lowerLeftCornerCoordinate.second < newBlock->lowerLeftCornerCoordinate.second+newBlock->height){
-				rightLastBlock->botLeft = newBlock;
-			}
-			std::vector<Block *> endBlockLeftNeighbors = this->searchLeftNeighbors(currentBlock);
-			std::vector<Block*> endBlockRightNeighbors = this->searchRightNeighbors(currentBlock);
 			
-			if(!endBlockLeftNeighbors.empty()){	
-				Block* curLeftNeightbor = endBlockLeftNeighbors.back();
+			Block* curLeftNeightbor = this->searchPointInBlock(xCoordinate-1, tempBlock->lowerLeftCornerCoordinate.second-1);
+			if(curLeftNeightbor!=nullptr){	
 				if(curLeftNeightbor->width == leftLastBlock->width && !leftLastBlock->isSolid && !curLeftNeightbor->isSolid &&
-					 leftLastBlock->lowerLeftCornerCoordinate.first == curLeftNeightbor->lowerLeftCornerCoordinate.first){
+					leftLastBlock->lowerLeftCornerCoordinate.first == curLeftNeightbor->lowerLeftCornerCoordinate.first && curLeftNeightbor != leftLastBlock){
+					std::vector<Block*> curLeftNeightborLeftNeightbors = this->searchLeftNeighbors(curLeftNeightbor);
+					std::vector<Block*> curLeftNeightborBotNeightbors = this->searchBotNeighbors(curLeftNeightbor);
+					std::vector<Block*> curLeftNeightborRightNeightbors = this->searchRightNeighbors(curLeftNeightbor);
 					leftLastBlock->height += curLeftNeightbor->height;
 					leftLastBlock->leftBot = curLeftNeightbor->leftBot;
 					leftLastBlock->botLeft = curLeftNeightbor->botLeft;
 					leftLastBlock->lowerLeftCornerCoordinate = curLeftNeightbor->lowerLeftCornerCoordinate;
-					std::vector<Block*> curLeftNeightborLeftNeightbors = this->searchLeftNeighbors(curLeftNeightbor);
-					std::vector<Block*> curLeftNeightborBotNeightbors = this->searchBotNeighbors(curLeftNeightbor);
-					std::vector<Block*> curLeftNeightborRightNeightbors = this->searchRightNeighbors(curLeftNeightbor);
+					
 					for(auto i: curLeftNeightborLeftNeightbors){
 						if(i->topRight == curLeftNeightbor){
 							i->topRight = leftLastBlock;
@@ -385,26 +395,23 @@ Block* Box::createBlock(int xCoordinate, int yCoordinate, int width, int height,
 					}
 
 					delete curLeftNeightbor;
-				}else{
-					if(leftLastBlock->lowerLeftCornerCoordinate.first >= curLeftNeightbor->lowerLeftCornerCoordinate.first&&
-						leftLastBlock->lowerLeftCornerCoordinate.first < curLeftNeightbor->width+curLeftNeightbor->lowerLeftCornerCoordinate.first)
-							leftLastBlock->leftBot = curLeftNeightbor;
-				}		
+				}
+				leftLastBlock->leftBot = this->searchPointInBlock(leftLastBlock->lowerLeftCornerCoordinate.first, leftLastBlock->lowerLeftCornerCoordinate.second-1);
 			}
 			
 
-			
-			if(!endBlockRightNeighbors.empty()){
-				Block *right = endBlockRightNeighbors.front();
+			Block *right = this->searchPointInBlock(xCoordinate+width, tempBlock->lowerLeftCornerCoordinate.second-1);
+			if(right != nullptr){	
 				if(right->width == rightLastBlock->width && !right->isSolid && !rightLastBlock->isSolid && 
-					right->lowerLeftCornerCoordinate.first == rightLastBlock->lowerLeftCornerCoordinate.first){
+					right->lowerLeftCornerCoordinate.first == rightLastBlock->lowerLeftCornerCoordinate.first && right != rightLastBlock){
+					std::vector<Block*> curLeftNeightborRightNeightbors = this->searchRightNeighbors(right);
+					std::vector<Block*> curLeftNeightborBotNeightbors = this->searchBotNeighbors(right);
+					std::vector<Block*> curLeftNeightborLeftNeightbors = this->searchLeftNeighbors(right);
 					rightLastBlock->height += right->height;
 					rightLastBlock->leftBot = right->leftBot;
 					rightLastBlock->botLeft = right->botLeft;
 					rightLastBlock->lowerLeftCornerCoordinate = right->lowerLeftCornerCoordinate;
-					std::vector<Block*> curLeftNeightborRightNeightbors = this->searchRightNeighbors(right);
-					std::vector<Block*> curLeftNeightborBotNeightbors = this->searchBotNeighbors(right);
-					std::vector<Block*> curLeftNeightborLeftNeightbors = this->searchLeftNeighbors(right);
+					
 					for(auto i: curLeftNeightborRightNeightbors){
 						if(i->botLeft == i){
 							i->botLeft = rightLastBlock;
@@ -421,35 +428,30 @@ Block* Box::createBlock(int xCoordinate, int yCoordinate, int width, int height,
 						}
 					}
 					delete right;
-				}else{	
-					if(right->lowerLeftCornerCoordinate.first >= rightLastBlock->lowerLeftCornerCoordinate.first&&
-						right->lowerLeftCornerCoordinate.first+right->width < rightLastBlock->lowerLeftCornerCoordinate.first){
-						rightLastBlock->leftBot = right;	
-					}
+				}
+				if(rightLastBlock != right && createRight){
+					rightLastBlock->leftBot = right;
 				}
 				
 			}
-			delete tempBlock;
 			break;
 		}
 		delete tempBlock;
-
 	}
-
 
 
 	return newBlock;
 }
 
 Block* Box::splitBlock(int yCoordinate, Block *targetBlock){
-	if(targetBlock == NULL){
-		return NULL;
+	if(targetBlock == nullptr){
+		return nullptr;
 	}
 	if(yCoordinate == targetBlock->lowerLeftCornerCoordinate.second){
-		return NULL;
+		return nullptr;
 	}
 	Block *newBlock = new Block(targetBlock->lowerLeftCornerCoordinate, targetBlock->leftBot, 
-		targetBlock->botLeft, targetBlock, NULL,
+		targetBlock->botLeft, targetBlock, nullptr,
 		yCoordinate-targetBlock->lowerLeftCornerCoordinate.second, targetBlock->width, targetBlock->isSolid, -1);
 
 	std::vector<Block *> targetBlockRightNeighbors = this->searchRightNeighbors(targetBlock);
@@ -458,30 +460,32 @@ Block* Box::splitBlock(int yCoordinate, Block *targetBlock){
 
 	for(Block *i : targetBlockRightNeighbors){
 		if(i->lowerLeftCornerCoordinate.second < newBlock->lowerLeftCornerCoordinate.second + newBlock->height){
-			if(newBlock->topRight == NULL){
+			if(newBlock->topRight == nullptr){
 				newBlock->topRight = i;
 			}
 			i->botLeft = newBlock;
-		}else{
+		}else if(i->lowerLeftCornerCoordinate.second < targetBlock->lowerLeftCornerCoordinate.second + targetBlock->height){
 			i->botLeft = targetBlock;
 		}
 	}
 	
 	
 	for(Block *i: targetBlockBotNeighbors){
-		if(i->lowerLeftCornerCoordinate.first+width < newBlock->lowerLeftCornerCoordinate.second+newBlock->width){
+		if(i->lowerLeftCornerCoordinate.first+width <= newBlock->lowerLeftCornerCoordinate.first+newBlock->width){
 			i->rightTop = newBlock;
 		}
 	}
 
 	
-	targetBlock->botLeft = NULL;
+	targetBlock->botLeft = nullptr;
 	for(Block *i : targetBlockLeftNeighbors){
-		if(i->lowerLeftCornerCoordinate.second+i->height > targetBlock->lowerLeftCornerCoordinate.second){
-			if(targetBlock->botLeft == NULL){
+		if(i->lowerLeftCornerCoordinate.second+i->height > yCoordinate){ 
+			if(targetBlock->botLeft == nullptr){
 				targetBlock->botLeft = i;
 			}
-			i->topRight = targetBlock;
+			if(i->lowerLeftCornerCoordinate.second+i->height <= targetBlock->lowerLeftCornerCoordinate.second + targetBlock->height){
+				i->topRight = targetBlock;
+			}
 		}else if(i->lowerLeftCornerCoordinate.second > newBlock->lowerLeftCornerCoordinate.second) {
 			i->topRight = newBlock;
 		}

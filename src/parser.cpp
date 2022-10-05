@@ -29,9 +29,10 @@ void Parser::Set(Box *box){
   		ss.str(line);
   		getline(ss, tok, ' ');
   		std::istringstream(tok) >> width;
+		getline(ss, tok, ' ');
   		std::istringstream(tok) >> height;
   		box->setWidthAndHeight(width, height);
-  		box->headBlock = new Block(Coordinate(0, 0), NULL, NULL, NULL, NULL, width, height, false, -1);
+  		box->headBlock = new Block(Coordinate(0, 0), nullptr, nullptr, nullptr, nullptr, height, width, false, -1);
 
 	    while ( getline (inputFile,line) ){
 	    	ss.str("");
