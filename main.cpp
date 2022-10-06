@@ -20,8 +20,8 @@ bool ansCompare(ANS a, ANS b){
 }
 
 int main(int argc, char **argv){
-	char *filename = (char*)"./testcase/case1.txt"; //default testcase
-	char *ouputFilename = (char*)"output.txt";
+	char *filename = (char*)"./testcase/case2.txt"; //default testcase
+	char *ouputFilename = (char*)"output2.txt";
 	if (argc >= 2){
 		filename = argv[1];
 	}
@@ -32,8 +32,8 @@ int main(int argc, char **argv){
 	Box box;
 	Parser parser(filename);
 	parser.Set(&box);
-	box.headBlock->PrintContent();
-	parser.PrintContent();
+	//box.headBlock->PrintContent();
+	//parser.PrintContent();
 
 	vector<std::pair<int, int>> ansStack;
 	vector<Block*> Blockstack;
@@ -50,18 +50,18 @@ int main(int argc, char **argv){
 			tempAns.second = searchResult->lowerLeftCornerCoordinate.second;
 			ansStack.push_back(tempAns);
 		}else if(parser.operation[i].first == 'N'){
-			if(i > 7)break;
 			std::vector<int> v = parser.operation[i].second;
+			//if(v[0] == 327)break;
 			Block *tempBlock = box.createBlock(v[1], v[2], v[3], v[4], v[0]);
-			printf("%d\n", tempBlock->index);
 			Blockstack.push_back(tempBlock);
 		}
 	}
-
+	
 	for(auto i: Blockstack){
 		int solidcnt = 0;
 		int spacecnt = 0;
 		vector<Block*> tempStack = box.searchNeighbors(i);
+		
 		for(auto j: tempStack){
 			if(j->isSolid){
 				solidcnt++;
@@ -78,7 +78,7 @@ int main(int argc, char **argv){
 	std::sort(ansVector.begin(), ansVector.end(), ansCompare);
 
 	vector<Block*> res;
-	res = box.searchBlocks(0, 0, 100, 150);
+	res = box.searchBlocks(0, 0, box.width, box.height);
 
 	FILE *foptr;
 	foptr = fopen(ouputFilename,"w");
@@ -92,13 +92,17 @@ int main(int argc, char **argv){
 		fprintf(foptr,"%d %d\n", i.first, i.second);
 	}
 	fclose(foptr);
+
+
+
+	
+	//vector<Block*> res;
 	// Block* temp = box.createBlock(35, 35, 30, 30, 1);
 	
 	// temp = box.createBlock(35, 65, 60, 20, 2);
 	
 
-
-	res = box.searchBlocks(0, 0, 100, 150);
+	//res = box.searchBlocks(0, 0, 100, 150);
 	// temp = box.createBlock(65, 5, 20, 60, 3);
 	// box.createBlock(5, 15, 60, 20, 4);
 	// box.createBlock(15, 35, 20, 60, 5);
@@ -106,12 +110,24 @@ int main(int argc, char **argv){
 	//temp->PrintContent();
 	//temp->botLeft->leftBot->PrintContent();
 	
-	//res = box.searchBlocks(0, 0, 100, 100);
-	Block *temp = box.searchPointInBlock(0, 64);
-	//res.push_back(temp->topRight->leftBot);
+	// res = box.searchBlocks(0, 0, box.width, box.height);
+	
+	// Block *temp = box.searchPointInBlock(box.width-1, box.height-1);
+	// //res.push_back(temp);
+	// while (temp != nullptr)
+	// {
+	// 	res.push_back(temp);
+	// 	temp = temp->leftBot;
+	// }
+	
+	//res.push_back(temp);
 	//temp->botLeft->PrintContent();
-	//Block* temp = box.searchPointInBlock(0, 121);
-	res = box.searchNeighbors(temp->topRight);
+	//Block* temp = box.searchPointInBlock(0, 799);
+	//res = box.searchNeighbors(Blockstack[14]);
+	//res = box.searchNeighbors(temp);
+	//Blockstack[14]->botLeft->botLeft->PrintContent();
+	//temp->topRight->PrintContent();
+	//res.push_back(Blockstack[14]->botLeft);
 	//Blockstack[4]->topRight->PrintContent();
 	//temp->botLeft->PrintContent();
 	// for(Block *i : res){
