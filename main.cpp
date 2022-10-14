@@ -20,8 +20,8 @@ bool ansCompare(ANS a, ANS b){
 }
 
 int main(int argc, char **argv){
-	char *filename = (char*)"./testcase/case2.txt"; //default testcase
-	char *ouputFilename = (char*)"output2.txt";
+	char *filename = (char*)"./testcase/case7.txt"; //default testcase
+	char *ouputFilename = (char*)"output7.txt";
 	if (argc >= 2){
 		filename = argv[1];
 	}
@@ -110,7 +110,7 @@ int main(int argc, char **argv){
 	//temp->PrintContent();
 	//temp->botLeft->leftBot->PrintContent();
 	
-	// res = box.searchBlocks(0, 0, box.width, box.height);
+	//res = box.searchBlocks(0, 0, box.width, box.height);
 	
 	// Block *temp = box.searchPointInBlock(box.width-1, box.height-1);
 	// //res.push_back(temp);
@@ -135,19 +135,19 @@ int main(int argc, char **argv){
 	// }
 	//cout << box.searchIsSolidBlock(0,0,100,100) << endl;
 
-	FILE *fptr;
-	fptr = fopen("out.txt","w");
-	if(fptr == nullptr)
-	{
-		printf("Error!");   
-		exit(1);             
-	}
-	fprintf(fptr, "%d\n", res.size());
-	fprintf(fptr, "%d %d\n", box.width, box.height);
-	for(auto *i:res){
-		fprintf(fptr, "%d %d %d %d %d\n", i->index, i->lowerLeftCornerCoordinate.first,
-		 i->lowerLeftCornerCoordinate.second, i->width, i->height);
-	}
-	fclose(fptr);
+	// FILE *fptr;
+	// fptr = fopen("out.txt","w");
+	// if(fptr == nullptr)
+	// {
+	// 	printf("Error!");   
+	// 	exit(1);             
+	// }
+	// fprintf(fptr, "%d\n", res.size());
+	// fprintf(fptr, "%d %d\n", box.width, box.height);
+	// for(auto *i:res){
+	// 	fprintf(fptr, "%d %d %d %d %d\n", i->index, i->lowerLeftCornerCoordinate.first,
+	// 	 i->lowerLeftCornerCoordinate.second, i->width, i->height);
+	// }
+	// fclose(fptr);
 	exit(0);  
 }
