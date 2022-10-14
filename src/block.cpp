@@ -1,6 +1,6 @@
 #include "block.h"
 #include <iostream>
-Block::Block (std::pair<int, int> coordinate, Block *lb, Block *bl, Block *rt, Block *tr, int height, int width, bool isSolid){
+Block::Block (std::pair<int, int> coordinate, Block *lb, Block *bl, Block *rt, Block *tr, int height, int width, bool isSolid, int index){
 	leftBot = lb;
 	botLeft = bl;
 	rightTop = rt;
@@ -8,5 +8,6 @@ Block::Block (std::pair<int, int> coordinate, Block *lb, Block *bl, Block *rt, B
 	lowerLeftCornerCoordinate = coordinate;
 	this->width = width;
 	this->height = height;
-	this->isSolid = isSolid; 
+	this->isSolid = isSolid;
+	this->index = index; 
 }

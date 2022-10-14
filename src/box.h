@@ -9,7 +9,7 @@ class Box{
 		int height;
 		Block *headBlock;
 		void setWidthAndHeight(int, int);
-		Block* createBlock(int xCoordinate, int yCoordinate, int width, int height);
+		Block* createBlock(int xCoordinate, int yCoordinate, int width, int height, int index);
 		bool searchIsSolidBlock(int xCoordinate, int yCoordinate, int width, int height);
 		std::vector<Block*> searchBlocks(int xCoordinate, int yCoordinate, int width, int height);
 		Block* searchPointInBlock(int xCoordinate, int yCoordinate);
@@ -20,6 +20,8 @@ class Box{
 		std::vector<Block*> searchBotNeighbors(Block *targetBlock);
 		Block* splitBlock(int yCoordinate, Block *targetBlock);
 		Block* findDownBlock(Block *targetBlock, int xCoordinate);
+		void recursiveEnumerate( Block *curBlock, std::vector<Block*>*res, int xCoordinate, int yCoordinate, int width, int height);
+
 };
 
 #endif
